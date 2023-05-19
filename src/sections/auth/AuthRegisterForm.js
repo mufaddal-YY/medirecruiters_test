@@ -11,11 +11,16 @@ import { useAuthContext } from '../../auth/useAuthContext';
 // components
 import Iconify from '../../components/iconify';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
+import { useSnackbar } from '../../components/snackbar';
 
+import { useRouter } from 'next/router';
+import { PATH_AUTH } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
 export default function AuthRegisterForm() {
   const { register } = useAuthContext();
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -49,7 +54,11 @@ export default function AuthRegisterForm() {
     try {
       if (register) {
         await register(data.email, data.password, data.firstName, data.lastName);
-      }
+      enqueueSnackbar('Successfully Registered! Please log in to verify.');
+      router.push(PATH_AUTH.login);
+      
+    }
+      
     } catch (error) {
       console.error(error);
 

@@ -15,11 +15,13 @@ import { useAuthContext } from '../../auth/useAuthContext';
 // components
 import Iconify from '../../components/iconify';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
+import { useSnackbar } from '../../components/snackbar';
 
 // ----------------------------------------------------------------------
 
 export default function AuthLoginForm() {
   const { login } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -48,6 +50,8 @@ export default function AuthLoginForm() {
   const onSubmit = async (data) => {
     try {
       await login(data.email, data.password);
+      enqueueSnackbar('Successfully Logged In!');
+
     } catch (error) {
       console.error(error);
       reset();
