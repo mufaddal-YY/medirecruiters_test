@@ -51,6 +51,7 @@ export default function AuthRegisterForm() {
   } = methods;
 
   const onSubmit = async (data) => {
+    
     try {
       if (register) {
         await register(data.email, data.password, data.firstName, data.lastName);
@@ -58,8 +59,10 @@ export default function AuthRegisterForm() {
       router.push(PATH_AUTH.login);
       
     }
-      
-    } catch (error) {
+      reset();
+    } 
+    
+    catch (error) {
       console.error(error);
 
       reset();
