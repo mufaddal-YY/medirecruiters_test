@@ -17,6 +17,7 @@ import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestor
 import { FIREBASE_API } from '../config-global';
 import { PATH_AUTH } from 'src/routes/paths';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -128,38 +129,25 @@ export function AuthProvider({ children }) {
     signInWithPopup(AUTH, TWITTER_PROVIDER);
   }, []);
 
-
-  // const register = useCallback(async (email, password, firstName, lastName) => {
-  //   await createUserWithEmailAndPassword(AUTH, email, password).then(async (res) => {
-  //     const userRef = doc(collection(DB, 'users'), res.user?.uid);
-  //     await setDoc(userRef, {
-  //       uid: res.user?.uid,
-  //       email,
-  //       displayName: `${firstName} ${lastName}`,
-  //     });
-      
-  //   });
-
-  // }, []);
   const register = useCallback(
     async (email, password, firstName, lastName) => {
       try {
         await createUserWithEmailAndPassword(AUTH, email, password);
-  
+
         const userRef = doc(collection(DB, 'users'), AUTH.currentUser.uid);
         await setDoc(userRef, {
           uid: AUTH.currentUser.uid,
           email,
           displayName: `${firstName} ${lastName}`,
         });
-  
+
         await signOut(AUTH); // Sign out the user after successful registration
         router.push(PATH_AUTH.login);
       } catch (error) {
         console.error(error);
-  
+
         reset();
-  
+
         setError('afterSubmit', {
           ...error,
           message: error.message || error,
@@ -168,7 +156,6 @@ export function AuthProvider({ children }) {
     },
     [router]
   );
-
 
   // LOGOUT
   const logout = useCallback(() => {
@@ -202,5 +189,4 @@ export function AuthProvider({ children }) {
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
-  
 }

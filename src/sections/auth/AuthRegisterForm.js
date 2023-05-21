@@ -15,6 +15,7 @@ import { useSnackbar } from '../../components/snackbar';
 
 import { useRouter } from 'next/router';
 import { PATH_AUTH } from 'src/routes/paths';
+
 // ----------------------------------------------------------------------
 
 export default function AuthRegisterForm() {

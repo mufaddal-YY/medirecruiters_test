@@ -29,7 +29,7 @@ UserTableRow.propTypes = {
 };
 
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name,  email, phoneNumber, isVerified, status } = row;
+  const { name,  email, phoneNumber, city, address } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -75,7 +75,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         </TableCell>
 
         <TableCell align="center">
-          <Iconify
+          {/* <Iconify
             icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
             sx={{
               width: 20,
@@ -83,17 +83,19 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
               color: 'success.main',
               ...(!isVerified && { color: 'warning.main' }),
             }}
-          />
+          /> */}
+          {city}
         </TableCell>
 
         <TableCell align="left">
-          <Label
+          {/* <Label
             variant="soft"
             color={(status === 'banned' && 'error') || 'success'}
             sx={{ textTransform: 'capitalize' }}
           >
-            {status}
-          </Label>
+            {address}
+          </Label> */}
+          {address}
         </TableCell>
 
         

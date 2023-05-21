@@ -1,40 +1,52 @@
 import { paramCase } from 'change-case';
-// next
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-// @mui
 import { Container } from '@mui/material';
-// routes
 import { PATH_DASHBOARD } from '../../../../routes/paths';
-// _mock_
 import { _userList } from '../../../../_mock/arrays';
-// layouts
 import DashboardLayout from '../../../../layouts/dashboard';
-// components
 import { useSettingsContext } from '../../../../components/settings';
 import CustomBreadcrumbs from '../../../../components/custom-breadcrumbs';
-// sections
 import UserNewEditForm from '../../../../sections/@dashboard/user/UserNewEditForm';
-
-// ----------------------------------------------------------------------
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 UserEditPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-// ----------------------------------------------------------------------
-
 export default function UserEditPage() {
   const { themeStretch } = useSettingsContext();
-
   const {
     query: { name },
   } = useRouter();
 
-  const currentUser = _userList.find((user) => paramCase(user.name) === name);
+  const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const getUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/users');
+      console.log('API response:', response.data);
+      setUsers(response.data);
+    } catch (error) {
+      console.error('API error:', error);
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  useEffect(() => {
+    if (users.length > 0) {
+      const foundUser = users.find((user) => paramCase(user.name) === name);
+      setCurrentUser(foundUser);
+    }
+  }, [users, name]);
 
   return (
     <>
       <Head>
-        <title> Candidate: Edit candidate | Medirecruiters</title>
+        <title>Candidate: Edit candidate | Medirecruiters</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
