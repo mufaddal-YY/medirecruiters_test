@@ -116,34 +116,53 @@ export function AuthProvider({ children }) {
   }, [initialize]);
 
   // LOGIN
+
   const login = useCallback(async (email, password) => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/v1/users', {
-        email,
-        password,
-      });
-      const { accessToken, user } = response.data;
+    const response = await axios.get('http://localhost:8080/api/v1/users', {
+      email,
+      password,
+    });
+    const { accessToken, user } = response.data;
+
+    setSession(accessToken);
+
+    dispatch({
+      type: 'LOGIN',
+      payload: {
+        user,
+      },
+    });
+  }, []);
+
+
+  // const login = useCallback(async (email, password) => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8080/api/v1/users', {
+  //       email,
+  //       password,
+  //     });
+  //     const { accessToken, user } = response.data;
   
-      setSession(accessToken);
+  //     setSession(accessToken);
   
-      dispatch({
-        type: 'LOGIN',
-        payload: {
-          user,
-        },
-      });
+  //     dispatch({
+  //       type: 'LOGIN',
+  //       payload: {
+  //         user,
+  //       },
+  //     });
   
-      // Redirect to the dashboard page after successful login
-      router.push('/dashboard/app');
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        // User does not exist or invalid credentials
-        throw new Error('Invalid email or password');
-      } else {
-        console.error(error);
-      }
-    }
-  }, [router]);
+  //     // Redirect to the dashboard page after successful login
+  //     router.push('/dashboard/app');
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 401) {
+  //       // User does not exist or invalid credentials
+  //       throw new Error('Invalid email or password');
+  //     } else {
+  //       console.error(error);
+  //     }
+  //   }
+  // }, [router]);
   
   
 
