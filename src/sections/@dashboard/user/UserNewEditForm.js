@@ -43,17 +43,18 @@ import bcrypt from 'bcryptjs';
 
 UserNewEditForm.propTypes = {
   isEdit: PropTypes.bool,
-  currentUser: PropTypes.object,
+  currentCandidate: PropTypes.object,
 };
 
-export default function UserNewEditForm({ isEdit = false, currentUser }) {
+export default function UserNewEditForm({ isEdit = false, currentCandidate }) {
+  
   const { push } = useRouter();
 
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const NewUserSchema = Yup.object().shape({
+  const NewCandidateSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string()
@@ -85,11 +86,11 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
       password: currentUser?.password || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentUser]
+    [currentCandidate]
   );
 
   const methods = useForm({
-    resolver: yupResolver(NewUserSchema),
+    resolver: yupResolver(NewCandidateSchema),
     defaultValues,
   });
 
@@ -106,14 +107,14 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
   const values = watch();
 
   useEffect(() => {
-    if (isEdit && currentUser) {
+    if (isEdit && currentCandidate) {
       reset(defaultValues);
     }
     if (!isEdit) {
       reset(defaultValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, currentUser]);
+  }, [isEdit, currentCandidate]);
 
   // const onSubmit = async (data) => {
   //   try {
@@ -134,8 +135,11 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
   // };
 
   const onSubmit = async (data) => {
+    
     try {
+
       const hashedPassword = await bcrypt.hash(data.password, 10);
+     
       const newData = {
         ...data,
         password: hashedPassword,
@@ -146,12 +150,12 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
 
       if (isEdit) {
         response = await axios.put(
-          `http://localhost:8080/api/v1/users/${currentUser._id}`,
+          `http://localhost:8080/api/v1/candidates/${currentCandidate._id}`,
           newData
         );
         successMessage = 'Updated Successfully';
       } else {
-        response = await axios.post('http://localhost:8080/api/v1/users', newData);
+        response = await axios.post('http://localhost:8080/api/v1/candidates', newData);
         successMessage = 'Created Successfully';
       }
 
@@ -180,6 +184,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
     },
     [setValue]
   );
+
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
@@ -221,6 +226,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
             {/* {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>} */}
             <Typography variant="h6">Create Credentials</Typography>
             <Stack direction="row" spacing={2}>
+
               <RHFTextField name="username" label="Username" />
 
               <RHFTextField

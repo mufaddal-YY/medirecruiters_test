@@ -5,7 +5,7 @@ import axios from '../utils/axios';
 import localStorageAvailable from '../utils/localStorageAvailable';
 //
 import { isValidToken, setSession } from './utils';
-
+import { useRouter } from 'next/router';
 // ----------------------------------------------------------------------
 
 // NOTE:
@@ -38,7 +38,7 @@ const reducer = (state, action) => {
   if (action.type === 'REGISTER') {
     return {
       ...state,
-      isAuthenticated: true,
+      isAuthenticated: false,
       user: action.payload.user,
     };
   }
@@ -64,6 +64,10 @@ AuthProvider.propTypes = {
 };
 
 export function AuthProvider({ children }) {
+
+  const router = useRouter();
+
+
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const storageAvailable = localStorageAvailable();
@@ -75,7 +79,7 @@ export function AuthProvider({ children }) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await axios.get('/api/account/my-account');
+        const response = await axios.get('http://localhost:8080/api/v1/users');
 
         const { user } = response.data;
 
@@ -113,40 +117,58 @@ export function AuthProvider({ children }) {
 
   // LOGIN
   const login = useCallback(async (email, password) => {
-    const response = await axios.post('/api/account/login', {
-      email,
-      password,
-    });
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
-
-    dispatch({
-      type: 'LOGIN',
-      payload: {
-        user,
-      },
-    });
-  }, []);
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/users', {
+        email,
+        password,
+      });
+      const { accessToken, user } = response.data;
+  
+      setSession(accessToken);
+  
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          user,
+        },
+      });
+  
+      // Redirect to the dashboard page after successful login
+      router.push('/dashboard/app');
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        // User does not exist or invalid credentials
+        throw new Error('Invalid email or password');
+      } else {
+        console.error(error);
+      }
+    }
+  }, [router]);
+  
+  
 
   // REGISTER
   const register = useCallback(async (email, password, firstName, lastName) => {
-    const response = await axios.post('/api/account/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
-    const { accessToken, user } = response.data;
-
-    localStorage.setItem('accessToken', accessToken);
-
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user,
-      },
-    });
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/users', {
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+      const { accessToken, user } = response.data;
+  
+      localStorage.setItem('accessToken', accessToken);
+  
+      dispatch({
+        type: 'REGISTER',
+        payload: {
+          user,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   // LOGOUT
@@ -156,6 +178,7 @@ export function AuthProvider({ children }) {
       type: 'LOGOUT',
     });
   }, []);
+
 
   const memoizedValue = useMemo(
     () => ({

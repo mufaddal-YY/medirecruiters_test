@@ -19,12 +19,12 @@ export default function UserEditPage() {
     query: { name },
   } = useRouter();
 
-  const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [candidates, setCandidate] = useState([]);
+  const [currentCandidate, setCurrentCandidate] = useState(null);
 
-  const getUsers = async () => {
+  const getCandidates = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/users');
+      const response = await axios.get('http://localhost:8080/api/v1/candidates');
       console.log('API response:', response.data);
       setUsers(response.data);
     } catch (error) {
@@ -37,9 +37,9 @@ export default function UserEditPage() {
   }, []);
 
   useEffect(() => {
-    if (users.length > 0) {
-      const foundUser = users.find((user) => paramCase(user.name) === name);
-      setCurrentUser(foundUser);
+    if (candidate.length > 0) {
+      const foundCandidate = candidates.find((candidates) => paramCase(candidate.name) === name);
+      setCurrentCandidate(foundCandidate);
     }
   }, [users, name]);
 

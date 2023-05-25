@@ -68,39 +68,39 @@ const navConfig = [
 
   // MANAGEMENT
   // ----------------------------------------------------------------------
-  // {
-  //     subheader: 'app',
-  //     items: [
-  //       {
-  //         title: 'mail',
-  //         path: PATH_DASHBOARD.mail.root,
-  //         icon: ICONS.mail,
-  //         info: <Label color="error">+32</Label>,
-  //       },
-  //       {
-  //         title: 'chat',
-  //         path: PATH_DASHBOARD.chat.root,
-  //         icon: ICONS.chat,
-  //       },
-  //       {
-  //         title: 'calendar',
-  //         path: PATH_DASHBOARD.calendar,
-  //         icon: ICONS.calendar,
-  //       },
-  //       {
-  //         title: 'tasks',
-  //         path: PATH_DASHBOARD.kanban,
-  //         icon: ICONS.kanban,
-  //       },
-  //     ],
-  //   },
+  {
+      subheader: 'app',
+      items: [
+        {
+          title: 'mail',
+          path: PATH_DASHBOARD.mail.root,
+          icon: ICONS.mail,
+          info: <Label color="error">+32</Label>,
+        },
+        {
+          title: 'chat',
+          path: PATH_DASHBOARD.chat.root,
+          icon: ICONS.chat,
+        },
+        {
+          title: 'calendar',
+          path: PATH_DASHBOARD.calendar,
+          icon: ICONS.calendar,
+        },
+        {
+          title: 'tasks',
+          path: PATH_DASHBOARD.kanban,
+          icon: ICONS.kanban,
+        },
+      ],
+    },
 
   // APP // ----------------------------------------------------------------------
 //   { 
 //     subheader: 'Website',
 //   items: [
 
-//     candidate
+    
 //     {
 //       title: 'Website Backend',
 //       path: PATH_DASHBOARD.candidate.root,

@@ -29,7 +29,7 @@ UserTableRow.propTypes = {
 };
 
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name,  email, phoneNumber, city, address } = row;
+  const { name, email, phoneNumber, city, address } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -97,8 +97,6 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           </Label> */}
           {address}
         </TableCell>
-
-        
 
         <TableCell align="right">
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>

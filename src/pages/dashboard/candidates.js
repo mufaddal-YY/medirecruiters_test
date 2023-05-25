@@ -203,6 +203,7 @@ export default function UserListPage() {
 
   const handleDeleteRow = async (_id) => {
     try {
+      
       const deleteRow = tableData.filter((row) => row._id !== _id);
       setSelected([]);
       setTableData(deleteRow);

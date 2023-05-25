@@ -235,15 +235,15 @@ export default function GeneralAppPage({ searchJobs, onSearchJobs }) {
             <AppCandidates
               title="Candidates"
               tableData={TABLE_HEAD}
-              // tableLabels={[
-              //   { id: 'booker', label: 'Name' },
-              //   { id: 'checkIn', label: 'Date Applied' },
-              //   { id: 'checkOut', label: 'Date Placed' },
-              //   { id: 'status', label: 'Status' },
-              //   { id: 'phone', label: 'Phone' },
-              //   { id: 'roomType', label: 'Room Type' },
-              //   { id: '' },
-              // ]}
+              tableLabels={[
+                { id: 'booker', label: 'Name' },
+                { id: 'checkIn', label: 'Date Applied' },
+                { id: 'checkOut', label: 'Date Placed' },
+                { id: 'status', label: 'Status' },
+                { id: 'phone', label: 'Phone' },
+                { id: 'roomType', label: 'Room Type' },
+                { id: '' },
+              ]}
             />
           </Grid> */}
         </Grid>

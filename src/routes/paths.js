@@ -67,11 +67,11 @@ export const PATH_DASHBOARD = {
   jobs: {
     root: path(ROOTS_DASHBOARD, '/jobs'),
     new: path(ROOTS_DASHBOARD, '/jobs/new-job'),
-    jobDetail: path(ROOTS_DASHBOARD, `/jobs/[title]/job-detail`),
+    detail: (jobTitle) => path(ROOTS_DASHBOARD, `/jobs/${jobTitle}`),
     cards: path(ROOTS_DASHBOARD, '/candidate/cards'),
     profile: path(ROOTS_DASHBOARD, '/candidate/profile'),
     account: path(ROOTS_DASHBOARD, '/candidate/account'),
-    edit: (name) => path(ROOTS_DASHBOARD, `/candidate/${name}/edit`),
+    edit: (jobTitle) => path(ROOTS_DASHBOARD, `/jobs/${jobTitle}/edit`),
     demoEdit: path(ROOTS_DASHBOARD, `/candidate/reece-chung/edit`),
   },
 

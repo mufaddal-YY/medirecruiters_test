@@ -85,11 +85,12 @@ const ROLE_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Company', align: 'left' },
-  { id: 'company', label: 'Email', align: 'left' },
-  { id: 'role', label: 'Phone Number', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'name', label: 'Company Name', align: 'left' },
+  { id: 'hrName', label: 'HR Name', align: 'left' },
+  { id: 'email', label: 'Email', align: 'left' },
+  { id: 'phone', label: 'Phone Number', align: 'left' },
+  { id: 'requirement', label: 'Requirement', align: 'left' },
+  { id: 'location', label: 'location', align: 'left' },
   { id: '' },
 ];
 
@@ -100,6 +101,43 @@ UserListPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 // ----------------------------------------------------------------------
 
 export default function UserListPage() {
+  const { push } = useRouter();
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const NewDatabaseSchema = Yup.object().shape({
+    companyName: Yup.string().required('Hospital/Company Name is required'),
+    hrName: Yup.string().required('HR name is required'),
+    phone: Yup.string().required('Phone is required'),
+    email: Yup.string().required('Email Status is required'),
+    location: Yup.string().required('Location is required'),
+    requirement: Yup.string().required('Requirement is required'),
+  });
+
+  const defaultValues = useMemo(
+    () => ({
+      companyName: currentDatabase?.companyName || '',
+      hrName: currentDatabase?.hrName || '',
+      phone: currentDatabase?.phone || '',
+      email: currentDatabase?.email || '',
+      requirement: currentDatabase?.requirement || '',
+      location: currentDatabase?.location || '',
+    }),
+    [currentDatabase]
+  );
+
+  const methods = useForm({
+    resolver: yupResolver(NewDatabaseSchema),
+    defaultValues,
+  });
+
+  const {
+    reset,
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
   const {
     dense,
     page,
@@ -122,8 +160,6 @@ export default function UserListPage() {
   const FILE_TYPE_OPTIONS = ['excel'];
 
   const { themeStretch } = useSettingsContext();
-
-  const { push } = useRouter();
 
   const [tableData, setTableData] = useState(_userList);
 
@@ -179,8 +215,36 @@ export default function UserListPage() {
     setFilterRole(event.target.value);
   };
 
-  const handleDeleteRow = (id) => {
-    const deleteRow = tableData.filter((row) => row.id !== id);
+  const onSubmit = async (data) => {
+    try {
+
+      let response;
+      let successMessage;
+
+      if (isEdit) {
+        response = await axios.put(
+          `http://localhost:8080/api/v1/databases/${currentDatabase._id}`,
+          data
+        );
+        successMessage = 'Updated Successfully';
+      } else {
+        response = await axios.post('http://localhost:8080/api/v1/databases', data);
+        successMessage = 'Created Successfully';
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      enqueueSnackbar(successMessage, { variant: 'success' }); // Show success snackbar
+      push(PATH_DASHBOARD.general.jobs);
+      console.log('DATA', data);
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar('An error occurred', { variant: 'error' }); // Show error snackbar
+    }
+  };
+
+  const handleDeleteRow = (_id) => {
+    const deleteRow = tableData.filter((row) => row._id !== _id);
     setSelected([]);
     setTableData(deleteRow);
 
@@ -192,7 +256,7 @@ export default function UserListPage() {
   };
 
   const handleDeleteRows = (selectedRows) => {
-    const deleteRows = tableData.filter((row) => !selectedRows.includes(row.id));
+    const deleteRows = tableData.filter((row) => !selectedRows.includes(row._id));
     setSelected([]);
     setTableData(deleteRows);
 
@@ -208,8 +272,8 @@ export default function UserListPage() {
     }
   };
 
-  const handleEditRow = (id) => {
-    push(PATH_DASHBOARD.user.edit(paramCase(id)));
+  const handleEditRow = (_id) => {
+    push(PATH_DASHBOARD.database.edit(paramCase(_id)));
   };
 
   const handleResetFilter = () => {
@@ -244,41 +308,42 @@ export default function UserListPage() {
 
         <FileNewFolderDialog open={openUploadFile} onClose={handleCloseUploadFile} />
 
-        <Grid sx={{mb: 2}} item xs={12} md={8}>
-          <Stack spacing={2} direction={{xs:"column", md:"row"}}>
-            <Stack direction="column" spacing={1.5} sx={{ flexGrow: 1 }}>
-              <Stack direction={{xs:"column", md:"row"}} spacing={2}>
-                <TextField fullWidth label="Company Name" variant="outlined" />
-                <TextField fullWidth label="Location" variant="outlined" />
-                <TextField fullWidth label="Requirement" variant="outlined" />
+        {/* <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+          <Grid sx={{ mb: 2 }} item xs={12} md={8}>
+            <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
+              <Stack direction="column" spacing={1.5} sx={{ flexGrow: 1 }}>
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                  <TextField fullWidth name="companyName" label="Company Name" variant="outlined" />
+                  <TextField fullWidth name="hrName" label="HR Name" variant="outlined" />
+                  <TextField fullWidth name="email" label="Email" variant="outlined" />
+                </Stack>
+                <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
+                  <TextField fullWidth name="phone" label="Phone" variant="outlined" />
+                  <TextField fullWidth name="requirement" label="Requirement" variant="outlined" />
+                  <TextField fullWidth name="location" label="Location" variant="outlined" />
+                </Stack>
               </Stack>
-              <Stack spacing={2} direction={{xs:"column", md:"row"}}>
-                <TextField fullWidth  label="HR Name" variant="outlined" />
-                <TextField fullWidth  label="Phone" variant="outlined" />
-                <TextField fullWidth  label="Email" variant="outlined" />
+              <Stack spacing={2.5} direction="column">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  startIcon={<Iconify icon="eva:plus-fill" />}
+                >
+                  Add Client
+                </Button>
+                <Button
+                  variant="soft"
+                  size="large"
+                  startIcon={<Iconify icon="material-symbols:upload-rounded" />}
+                  onClick={handleOpenUploadFile}
+                >
+                  Upload
+                </Button>
               </Stack>
             </Stack>
-            <Stack spacing={2.5} direction="column">
-              <Button
-                
-                type='submit'
-                variant="contained"
-                size='large'
-                startIcon={<Iconify icon="eva:plus-fill" />}
-              >
-                Add Client
-              </Button>
-              <Button
-                variant="soft"
-                size='large'
-                startIcon={<Iconify icon="material-symbols:upload-rounded" />}
-                onClick={handleOpenUploadFile}
-              >
-                Upload
-              </Button>
-            </Stack>
-          </Stack>
-        </Grid>
+          </Grid>
+        </FormProvider> */}
 
         <Card>
           <Tabs
@@ -314,7 +379,7 @@ export default function UserListPage() {
               onSelectAllRows={(checked) =>
                 onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id)
+                  tableData.map((row) => row._id)
                 )
               }
               action={
@@ -338,7 +403,7 @@ export default function UserListPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row._id)
                     )
                   }
                 />
@@ -348,12 +413,12 @@ export default function UserListPage() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <UserTableRow
-                        key={row.id}
+                        key={row._id}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.name)}
+                        selected={selected.includes(row._id)}
+                        onSelectRow={() => onSelectRow(row._id)}
+                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onEditRow={() => handleEditRow(row.companyName)}
                       />
                     ))}
 
@@ -422,16 +487,16 @@ function applyFilter({ inputData, comparator, filterName, filterStatus, filterRo
 
   if (filterName) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (database) => database.database.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 
   if (filterStatus !== 'all') {
-    inputData = inputData.filter((user) => user.status === filterStatus);
+    inputData = inputData.filter((database) => database.status === filterStatus);
   }
 
   if (filterRole !== 'all') {
-    inputData = inputData.filter((user) => user.role === filterRole);
+    inputData = inputData.filter((database) => database.role === filterRole);
   }
 
   return inputData;
