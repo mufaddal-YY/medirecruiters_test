@@ -74,16 +74,16 @@ export default function UserNewEditForm({ isEdit = false, currentCandidate }) {
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      username: currentUser?.username || '',
-      password: currentUser?.password || '',
+      name: currentCandidate?.name || '',
+      email: currentCandidate?.email || '',
+      phoneNumber: currentCandidate?.phoneNumber || '',
+      address: currentCandidate?.address || '',
+      country: currentCandidate?.country || '',
+      state: currentCandidate?.state || '',
+      city: currentCandidate?.city || '',
+      zipCode: currentCandidate?.zipCode || '',
+      username: currentCandidate?.userename || '',
+      password: currentCandidate?.password || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentCandidate]
@@ -222,8 +222,7 @@ export default function UserNewEditForm({ isEdit = false, currentCandidate }) {
             </RHFSelect>
           </Box>
 
-          <Stack direction="column" spacing={3} sx={{ py: 6 }}>
-            {/* {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>} */}
+          {/* <Stack direction="column" spacing={3} sx={{ py: 6 }}>
             <Typography variant="h6">Create Credentials</Typography>
             <Stack direction="row" spacing={2}>
 
@@ -244,7 +243,7 @@ export default function UserNewEditForm({ isEdit = false, currentCandidate }) {
                 }}
               />
             </Stack>
-          </Stack>
+          </Stack> */}
 
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

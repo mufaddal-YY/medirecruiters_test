@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { paramCase } from 'change-case';
+
 // @mui
 import {
   Stack,
@@ -17,10 +20,12 @@ import Label from '../../../../components/label';
 import Iconify from '../../../../components/iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import ConfirmDialog from '../../../../components/confirm-dialog';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
-UserTableRow.propTypes = {
+DatabaseTableRow.propTypes = {
   row: PropTypes.object,
   selected: PropTypes.bool,
   onEditRow: PropTypes.func,
@@ -28,8 +33,17 @@ UserTableRow.propTypes = {
   onSelectRow: PropTypes.func,
 };
 
-export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name, email, phoneNumber, city, status } = row;
+export default function DatabaseTableRow({
+  row,
+  selected,
+  onEditRow,
+  onSelectRow,
+  onDeleteRow,
+  onDetails,
+  id,
+  initialStatuses,
+}) {
+  const { companyName, hrName, email, phone, requirement, location } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -51,6 +65,20 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
     setOpenPopover(null);
   };
 
+  const handleStatusesChange = (event, cellId) => {
+    const newStatus = event.target.value;
+
+    // Make an HTTP POST request to the API endpoint
+    axios
+      .post('http://localhost:8080/api/v1/databases', { cellId, newStatus })
+      .then((response) => {
+        console.log('Status updated successfully');
+      })
+      .catch((error) => {
+        console.error('Error updating status:', error);
+      });
+  };
+
   return (
     <>
       <TableRow hover selected={selected}>
@@ -60,33 +88,41 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
 
         <TableCell>
           <Stack direction="row" alignItems="center" spacing={2}>
-            {/* <Avatar alt={name} src={avatarUrl} /> */}
+            {/* <Avatar alt={name} src={logoUrl} /> */}
 
-            <Typography variant="subtitle2" noWrap>
-              {name}
+            <Typography
+              onClick={() => {
+                onDetails();
+              }}
+              sx={{ color: 'black', cursor: 'pointer' }}
+              variant="subtitle2"
+              noWrap
+            >
+              {companyName}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell align="left">{email}</TableCell>
+        <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+          {hrName}
+        </TableCell>
 
         <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-          {phoneNumber}
+          {email}
+        </TableCell>
+
+        <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+          {phone}
         </TableCell>
 
         <TableCell align="center">
-          {city}
+          <Label variant="soft" color="info" sx={{ textTransform: 'capitalize' }}>
+            {requirement}
+          </Label>
         </TableCell>
 
-        <TableCell align="left">
-          <Label
-            variant="soft"
-            color={(status === 'banned' && 'error') || 'success'}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {status}
-          </Label>
-          
+        <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+          {location}
         </TableCell>
 
         <TableCell align="right">
@@ -107,12 +143,10 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
             handleOpenConfirm();
             handleClosePopover();
           }}
-          sx={{ color: 'error.main' }}
         >
-          <Iconify icon="eva:trash-2-outline" />
-          Delete
+          <Iconify icon="eva:eye-outline" />
+          View
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             onEditRow();
@@ -121,6 +155,16 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         >
           <Iconify icon="eva:edit-fill" />
           Edit
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleOpenConfirm();
+            handleClosePopover();
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          <Iconify icon="eva:trash-2-outline" />
+          Delete
         </MenuItem>
       </MenuPopover>
 

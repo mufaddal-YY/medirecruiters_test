@@ -52,9 +52,9 @@ import { ThemeSettings, SettingsProvider } from '../components/settings';
 // Check our docs
 // https://docs.minimals.cc/authentication/js-version
 
-import { AuthProvider } from '../auth/JwtContext';
+// import { AuthProvider } from '../auth/JwtContext';
 // import { AuthProvider } from '../auth/Auth0Context';
-// import { AuthProvider } from '../auth/FirebaseContext';
+import { AuthProvider } from '../auth/FirebaseContext';
 // import { AuthProvider } from '../auth/AwsCognitoContext';
 
 // ----------------------------------------------------------------------
@@ -79,7 +79,7 @@ export default function MyApp(props) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
 
-      <AuthProvider>
+      <AuthProvider >
         <ReduxProvider store={store}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <SettingsProvider>

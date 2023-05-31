@@ -10,6 +10,7 @@ import {
   GithubAuthProvider,
   TwitterAuthProvider,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail, // Add this import
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestore';
@@ -157,6 +158,16 @@ export function AuthProvider({ children }) {
     [router]
   );
 
+  // RESET PASSWORD
+  const resetPassword = useCallback(async (email) => {
+    try {
+      await sendPasswordResetEmail(AUTH, email);
+    } catch (error) {
+      console.error(error);
+      // Handle error if necessary
+    }
+  }, []);
+
   // LOGOUT
   const logout = useCallback(() => {
     signOut(AUTH);
@@ -184,6 +195,7 @@ export function AuthProvider({ children }) {
       loginWithGoogle,
       loginWithTwitter,
       register,
+      resetPassword,
       logout,
     ]
   );
