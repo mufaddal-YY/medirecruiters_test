@@ -49,7 +49,7 @@ export default function JobTableRow({
   initialStatuses,
 }) {
   
-  const { jobTitle, createdAt, company, location, name, role, status } = row;
+  const { jobTitle, salary, lang, createdAt, status } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -110,11 +110,11 @@ export default function JobTableRow({
         </TableCell>
 
         <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-          {company}
+          {salary}
         </TableCell>
 
         <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-
+          {lang}
         </TableCell>
 
         <TableCell align="left" sx={{ textTransform: 'capitalize' }}>

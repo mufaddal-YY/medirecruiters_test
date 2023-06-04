@@ -60,8 +60,8 @@ const STATUS_OPTIONS = ['all', 'Active', 'Inactive'];
 
 const TABLE_HEAD = [
   { id: 'jobTitle', label: 'Job Role', align: 'center' },
-  { id: 'name', label: 'Company Name', align: 'left' },
-  { id: 'applications', label: 'Applications', align: 'left' },
+  { id: 'name', label: 'Salary', align: 'left' },
+  { id: 'applications', label: 'Language', align: 'left' },
   { id: 'date', label: 'Created on', align: 'left' },
   { id: 'status', label: 'Status', align: 'center' },
   { id: '' },
